@@ -1,0 +1,466 @@
+<!--
+    PLANNING & NARRATIVE STRUCTURE:
+    1.  **Introduction/Hook**: The K-Beauty Boom & The Regulatory Wall. Why RP matters now (MoCRA).
+    2.  **What is an RP?**: Definition and Qualification. Visualized with a Donut Chart showing entities that can be RPs.
+    3.  **Labeling Anatomy (The Core)**: A visual CSS-based diagram (No SVG) distinguishing Principal Display Panel (PDP) vs. Information Panel.
+    4.  **Key MoCRA Deadlines**: A CSS-based horizontal timeline showing implementation phases.
+    5.  **Risk Analysis**: Bar Chart showing top FDA Labeling Violations (What to avoid).
+    6.  **Action Plan**: Step-by-step checklist for Korean SMEs.
+    
+    VISUALIZATION CHOICES (NO SVG, NO MERMAID):
+    1.  **RP Composition (Goal: Inform)**: Donut Chart (Chart.js). Shows % breakdown of who usually acts as RP (Brand Owner vs. Distributor).
+        * Justification: Simple proportion visualization.
+    2.  **Labeling Zones (Goal: Organize)**: CSS Grid/Flexbox Diagram.
+        * Justification: Needs to look like a physical box. Canvas/Chart.js is overkill, SVG is banned. CSS borders are perfect.
+    3.  **US Market Growth vs. Regulations (Goal: Context)**: Line Chart (Chart.js).
+        * Justification: Shows the rising stakes (Export volume vs. Regulatory actions).
+    4.  **Top Violations (Goal: Compare)**: Horizontal Bar Chart (Chart.js).
+        * Justification: Comparing distinct categories of errors (e.g., "Missing Ingredients" vs. "False Claims").
+    
+    PALETTE: "Vibrant Tech & Trust"
+    * Primary: #2563EB (Royal Blue)
+    * Secondary: #06B6D4 (Cyan)
+    * Accent: #F97316 (Vibrant Orange for warnings/actions)
+    * Background: #F8FAFC (Slate 50)
+    
+    CONFIRMATION:
+    * NO SVG used. Icons are standard Unicode characters.
+    * NO Mermaid JS used.
+    * Chart.js used for data.
+    * Tailwind used for layout.
+-->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Cosmetics RP & Labeling Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+
+        /* Chart Container Styling - Mandatory Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Prevent excessive width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom Utilities for "No SVG" Graphics */
+        .cosmetic-box {
+            background: white;
+            border: 2px solid #1E293B;
+            box-shadow: 10px 10px 0px #CBD5E1;
+            transition: transform 0.3s ease;
+        }
+        .cosmetic-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .label-zone {
+            border: 2px dashed #94A3B8;
+            background-color: #F1F5F9;
+        }
+
+        .step-connector::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -2px;
+            width: 4px;
+            height: 100%;
+            background-color: #E2E8F0;
+            z-index: 0;
+        }
+        
+        .step-item:last-child .step-connector::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-blue-700 to-cyan-500 text-white p-8 md:p-16 shadow-lg">
+        <div class="max-w-6xl mx-auto">
+            <div class="inline-block bg-orange-500 text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
+                US Export Strategy
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black mb-4 leading-tight">
+                미국 화장품 규제와<br>Responsible Person (RP)
+            </h1>
+            <p class="text-xl md:text-2xl text-blue-100 max-w-2xl font-light">
+                MoCRA 시행 이후 더욱 까다로워진 라벨링 규정. <br>
+                성공적인 미국 진출을 위한 필수 가이드입니다.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-12 gap-8 -mt-10 relative z-10">
+
+        <!-- Intro Card -->
+        <div class="col-span-1 md:col-span-12 bg-white rounded-xl shadow-md p-8 border-l-8 border-blue-600">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">왜 지금 RP(책임자)가 중요한가요?</h2>
+            <p class="text-gray-600 text-lg leading-relaxed">
+                2022년 화장품 규제 현대화법(MoCRA) 통과로 인해 미국 FDA의 권한이 대폭 강화되었습니다. 
+                이제 미국 내 주소와 연락처를 보유한 <strong>Responsible Person (RP)</strong> 없이는 제품 등록 및 유통이 불가능합니다. 
+                RP는 단순한 대리인이 아니라, 안전성 입증과 유해 사례 보고의 법적 주체입니다.
+            </p>
+        </div>
+
+        <!-- Section 1: Who is the RP? (Chart) -->
+        <section class="col-span-1 md:col-span-6 bg-white rounded-xl shadow-md p-6 flex flex-col">
+            <div class="mb-4">
+                <h3 class="text-xl font-bold text-blue-800 flex items-center gap-2">
+                    <span class="text-2xl">👥</span> RP의 자격 요건
+                </h3>
+                <p class="text-sm text-gray-500 mt-2">
+                    RP는 미국 내에 소재지를 둔 법인이어야 합니다. 해외(한국) 제조사는 직접 RP가 될 수 없으며, 미국 지사나 대행 에이전트가 필요합니다.
+                </p>
+            </div>
+            
+            <div class="chart-container flex-grow">
+                <canvas id="rpTypeChart"></canvas>
+            </div>
+            <div class="mt-4 text-center text-xs text-gray-400">
+                *일반적인 RP 구성 비율 추정치
+            </div>
+        </section>
+
+        <!-- Section 2: RP Responsibilities (Cards) -->
+        <section class="col-span-1 md:col-span-6 flex flex-col gap-4">
+            <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-sm border border-blue-100">
+                <h3 class="font-bold text-lg mb-2 text-blue-700">1. 제품 리스팅 (Listing)</h3>
+                <p class="text-gray-600 text-sm">성분, 제조소 정보를 포함하여 FDA에 제품을 등록하고 매년 갱신해야 합니다.</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl shadow-sm border border-blue-100">
+                <h3 class="font-bold text-lg mb-2 text-blue-700">2. 안전성 입증 (Safety)</h3>
+                <p class="text-gray-600 text-sm">제품 안전성을 증명할 수 있는 테스트 데이터와 기록을 보관해야 합니다.</p>
+            </div>
+            <div class="bg-gradient-to-br from-orange-50 to-white p-6 rounded-xl shadow-sm border border-orange-100">
+                <h3 class="font-bold text-lg mb-2 text-orange-600">3. 유해 사례 보고</h3>
+                <p class="text-gray-600 text-sm">소비자의 심각한 부작용(Serious Adverse Events) 발생 시 15일 이내 FDA 보고 의무.</p>
+            </div>
+        </section>
+
+        <!-- Section 3: Labeling Anatomy (CSS Diagram) -->
+        <div class="col-span-1 md:col-span-12 mt-8">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">🇺🇸 라벨링 해부도 (Labeling Anatomy)</h2>
+                <p class="text-gray-500">미국 규정(21 CFR)은 라벨을 크게 두 영역으로 구분합니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- PDP (Front) -->
+                <div class="cosmetic-box p-6 md:p-10 bg-white relative">
+                    <div class="absolute top-0 left-0 bg-blue-600 text-white text-xs font-bold px-3 py-1">PDP (주요면)</div>
+                    <div class="h-full flex flex-col justify-between items-center text-center space-y-8 border-4 border-double border-blue-100 p-4">
+                        <!-- Identity Statement -->
+                        <div class="w-full">
+                            <h3 class="text-4xl font-black text-gray-800 font-serif">K-GLOW</h3>
+                            <div class="mt-2 inline-block bg-yellow-100 text-yellow-800 px-2 py-1 text-sm border border-yellow-300 rounded relative group cursor-help">
+                                <strong>Identity Statement</strong>
+                                <span class="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 w-48 bg-gray-800 text-white text-xs p-2 rounded mb-2">
+                                    제품의 일반명 (예: Moisturizing Cream). 브랜드명만으로는 불충분합니다.
+                                </span>
+                            </div>
+                            <p class="text-xl text-gray-500 mt-1">Daily Moisture Cream</p>
+                        </div>
+
+                        <!-- Image Placeholder (CSS) -->
+                        <div class="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center text-4xl">
+                            💧
+                        </div>
+
+                        <!-- Net Quantity -->
+                        <div class="w-full">
+                            <div class="inline-block bg-yellow-100 text-yellow-800 px-2 py-1 text-sm border border-yellow-300 rounded relative group cursor-help">
+                                <strong>Net Quantity</strong>
+                                <span class="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 w-48 bg-gray-800 text-white text-xs p-2 rounded mb-2">
+                                    하단 30% 영역에 위치. 미터법(mL/g)과 미국식(oz) 병기 필수.
+                                </span>
+                            </div>
+                            <p class="text-lg font-bold text-gray-700 mt-1">1.7 fl. oz. / 50 mL</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Panel (Back/Side) -->
+                <div class="cosmetic-box p-6 md:p-10 bg-white relative">
+                    <div class="absolute top-0 left-0 bg-cyan-600 text-white text-xs font-bold px-3 py-1">Information Panel (정보면)</div>
+                    <div class="h-full flex flex-col text-left space-y-4 text-xs md:text-sm text-gray-600">
+                        
+                        <!-- Ingredients -->
+                        <div class="label-zone p-3 rounded">
+                            <div class="font-bold text-gray-800 mb-1 flex justify-between">
+                                <span>Ingredients (전성분)</span>
+                                <span class="text-orange-500">⚠ 중요</span>
+                            </div>
+                            <p class="leading-tight text-gray-500">
+                                Water, Glycerin, Niacinamide... <br>
+                                <span class="text-orange-600 font-bold">*INCI Name 사용 필수, 함량 순서 기재</span>
+                            </p>
+                        </div>
+
+                        <!-- Directions & Warnings -->
+                        <div class="p-2 border-b border-gray-200">
+                            <strong>Directions:</strong> Apply gently...<br>
+                            <strong class="text-red-500">Warning:</strong> Keep out of eyes...
+                        </div>
+
+                        <!-- RP Info -->
+                        <div class="label-zone p-3 rounded bg-blue-50 border-blue-200">
+                            <div class="font-bold text-blue-800 mb-1">Distributor / RP Info</div>
+                            <p>
+                                Manufactured for: <br>
+                                <strong>K-Beauty USA Inc.</strong><br>
+                                123 Wilshire Blvd, LA, CA 90017<br>
+                                <span class="text-blue-600 text-xs">*실제 미국 내 연락 가능한 주소 필수</span>
+                            </p>
+                        </div>
+
+                        <!-- Country of Origin -->
+                        <div class="text-right font-bold text-gray-400">
+                            Made in Korea
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: FDA Warning Letters Data (Chart) -->
+        <div class="col-span-1 md:col-span-8 bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">🚫 주요 FDA 라벨링 위반 사유</h3>
+            <p class="text-sm text-gray-500 mb-6">최근 3년간 한국 화장품 기업이 가장 많이 지적받은 항목입니다.</p>
+            
+            <div class="chart-container">
+                <canvas id="violationChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Section 5: MoCRA Timeline (CSS Visual) -->
+        <div class="col-span-1 md:col-span-4 bg-gray-800 text-white rounded-xl shadow-md p-6 flex flex-col justify-center">
+            <h3 class="text-xl font-bold text-cyan-400 mb-6 border-b border-gray-600 pb-2">📅 규제 타임라인</h3>
+            
+            <div class="relative space-y-8 pl-4">
+                <!-- Line -->
+                <div class="absolute left-[19px] top-2 bottom-2 w-0.5 bg-gray-600"></div>
+
+                <div class="relative flex items-center gap-4">
+                    <div class="w-3 h-3 bg-green-500 rounded-full z-10 ring-4 ring-gray-800"></div>
+                    <div>
+                        <div class="text-xs text-gray-400">2022. 12</div>
+                        <div class="font-bold">MoCRA 법안 통과</div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center gap-4">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full z-10 ring-4 ring-gray-800"></div>
+                    <div>
+                        <div class="text-xs text-gray-400">2024. 07 (연장)</div>
+                        <div class="font-bold text-blue-300">시설 등록 & 제품 리스팅</div>
+                        <div class="text-xs text-gray-400">의무화 시작</div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center gap-4">
+                    <div class="w-3 h-3 bg-orange-500 rounded-full z-10 ring-4 ring-gray-800"></div>
+                    <div>
+                        <div class="text-xs text-gray-400">2024. 12</div>
+                        <div class="font-bold text-orange-300">전문가 라벨링 요건</div>
+                        <div class="text-xs text-gray-400">연락처 기재 의무화</div>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center gap-4">
+                    <div class="w-3 h-3 bg-gray-400 rounded-full z-10 ring-4 ring-gray-800"></div>
+                    <div>
+                        <div class="text-xs text-gray-400">2025 (예정)</div>
+                        <div class="font-bold">GMP 규정 확정</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Action Checklist -->
+        <div class="col-span-1 md:col-span-12 mt-4 mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">✅ 수출 준비 체크리스트</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-6 rounded-lg shadow border-t-4 border-cyan-500">
+                    <div class="text-3xl mb-2">🔍</div>
+                    <h4 class="font-bold text-lg">성분 검토 (Ingredient Review)</h4>
+                    <p class="text-sm text-gray-600 mt-2">미국 내 사용 금지 성분 및 색소 첨가제 승인 여부를 사전에 확인했나요?</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow border-t-4 border-blue-500">
+                    <div class="text-3xl mb-2">🤝</div>
+                    <h4 class="font-bold text-lg">US Agent 선임</h4>
+                    <p class="text-sm text-gray-600 mt-2">FDA와 소통하고 긴급 상황에 대응할 현지 에이전트 계약을 완료했나요?</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow border-t-4 border-orange-500">
+                    <div class="text-3xl mb-2">📦</div>
+                    <h4 class="font-bold text-lg">라벨 영어 표기 검수</h4>
+                    <p class="text-sm text-gray-600 mt-2">국문 라벨의 단순 번역이 아닌, FDA 규정에 맞는 영어 표현을 사용했나요?</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-8 text-center text-sm">
+        <p>Infographic Generated for Korean Cosmetic Exporters &copy; 2025</p>
+        <p>Data based on FDA Guidelines & MoCRA Updates</p>
+    </footer>
+
+    <!-- JavaScript for Charts -->
+    <script>
+        // --- UTILITY: Label Splitting for Wrapping ---
+        // Splits long strings into arrays of strings for multi-line support in Chart.js
+        function splitLabel(str, maxLen = 16) {
+            if (str.length <= maxLen) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= maxLen) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // --- CHART 1: RP Types Donut Chart ---
+        const ctxRP = document.getElementById('rpTypeChart').getContext('2d');
+        const rawLabelsRP = ['미국 내 브랜드 본사', '공인 대행 에이전트 (Agent)', '현지 유통사 (Distributor)'];
+        const wrappedLabelsRP = rawLabelsRP.map(l => splitLabel(l, 18));
+
+        new Chart(ctxRP, {
+            type: 'doughnut',
+            data: {
+                labels: wrappedLabelsRP,
+                datasets: [{
+                    data: [30, 45, 25], // Hypothetical distribution for visualization
+                    backgroundColor: [
+                        '#2563EB', // Blue
+                        '#06B6D4', // Cyan
+                        '#F97316'  // Orange
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: "'Noto Sans KR', sans-serif", size: 12 },
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                        padding: 12,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) return label.join(' ');
+                                return label;
+                            },
+                            label: function(context) {
+                                return ` ${context.parsed}%`;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // --- CHART 2: Violations Bar Chart ---
+        const ctxViolation = document.getElementById('violationChart').getContext('2d');
+        const rawLabelsV = [
+            '성분 표기 오류 (INCI 미준수)', 
+            '색소 첨가제 미승인', 
+            '의약품 오인 효능 광고', 
+            '필수 영문 정보 누락',
+            '제조원/배급사 정보 부족'
+        ];
+        const wrappedLabelsV = rawLabelsV.map(l => splitLabel(l, 20));
+
+        new Chart(ctxViolation, {
+            type: 'bar',
+            data: {
+                labels: wrappedLabelsV,
+                datasets: [{
+                    label: '지적 빈도 (Relative Frequency)',
+                    data: [85, 60, 55, 40, 30], // Score out of 100
+                    backgroundColor: '#3B82F6',
+                    borderRadius: 6,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal bar
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { display: false }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { 
+                            font: { family: "'Noto Sans KR', sans-serif", weight: 'bold' },
+                            color: '#475569'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) return label.join(' ');
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
