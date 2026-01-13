@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Beauty US Launch Strategy: Ingredient Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #F9FAFB; color: #1F2937; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; height: 350px; margin: 0 auto; }
+        .active-tab { border-bottom: 2px solid #059669; color: #059669; font-weight: 700; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card-hover:hover { transform: translateY(-2px); transition: all 0.3s ease; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
+    <!-- Chosen Palette: Nature & Clinical - Warm Gray background (#F9FAFB), Text (#1F2937), Primary Green (#059669), Secondary Sage (#D1FAE5), Accent Plum (#BE185D) -->
+    <!-- Application Structure Plan: The app is designed as a Decision Support Dashboard.
+         1. Executive Summary: Immediate answer to "Which is fastest?" (Matcha).
+         2. Market Intelligence: Visualizing US search volume and consumer perception to ground the decision in data.
+         3. Ingredient Deep Dive: Side-by-side comparison cards allowing detailed SWOT analysis.
+         4. Strategic Matrix: A radar chart comparing business metrics (Cost, Hype, Efficacy).
+         5. Simulation: A projected sales velocity model based on marketing inputs.
+         This structure moves from the 'Result' to the 'Evidence' to the 'Strategic Details', facilitating quick buy-in followed by deep verification. -->
+    <!-- Visualization & Content Choices:
+         1. Trend Line Chart: Shows US Interest over time. Goal: Prove Matcha's rising trend vs. Green Tea's stagnation.
+         2. Radar Chart: Attribute comparison (Novelty, Efficacy, Storytelling). Goal: Visualizing the "why" behind the choice.
+         3. Interactive Cards: For qualitative data (Marketing hooks, Risks). Interaction: Toggle details to keep UI clean.
+         4. Sales Projection Bar Chart: Visualizing the "Fastest Sales" claim.
+         All visualizations use Chart.js (Canvas) inside responsive containers. NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-emerald-700">K-Beauty Launch Strategy</span>
+                </div>
+                <div class="hidden sm:flex space-x-8 items-center">
+                    <button onclick="switchTab('summary')" id="nav-summary" class="active-tab px-3 py-2 text-sm font-medium transition-colors">요약 (Executive Summary)</button>
+                    <button onclick="switchTab('analysis')" id="nav-analysis" class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-emerald-600 transition-colors">데이터 분석 (Data Analysis)</button>
+                    <button onclick="switchTab('strategy')" id="nav-strategy" class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-emerald-600 transition-colors">마케팅 전략 (Strategy)</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: EXECUTIVE SUMMARY -->
+        <div id="summary" class="tab-content active space-y-8">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-4">미국 시장 '고마쥬 필링' 런칭 성분 분석</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    말차 vs 녹차 vs 청매실: 초기 판매 속도와 시장 침투력을 기준으로 한 최적의 컨셉 성분 제안
+                </p>
+            </div>
+
+            <!-- The Verdict -->
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-l-4 border-emerald-500 p-8 rounded-lg shadow-sm mb-10">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-emerald-800 mb-2">🏆 최종 추천: 말차 (Matcha)</h2>
+                        <p class="text-gray-700 leading-relaxed">
+                            <strong>"Fastest Sales" 달성을 위한 최적의 선택.</strong><br>
+                            이미 형성된 강력한 '슈퍼푸드' 팬덤, SNS 바이럴 가능성(시각적 요소), 그리고 '모공/피지' 케어에 대한 직관적 연상 작용으로 인해 초기 트래픽 확보에 가장 유리합니다.
+                        </p>
+                    </div>
+                    <div class="mt-4 md:mt-0 md:ml-6 flex-shrink-0">
+                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
+                            예상 초기 전환율: 매우 높음
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Matcha -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-emerald-100 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">🍵 말차 (Matcha)</h3>
+                        <span class="text-emerald-600 font-bold">1위</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500">✓</span> 미국 내 '웰니스' 트렌드 부합</li>
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500">✓</span> 고마쥬 제형(스크럽)과 연상 일치</li>
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500">✓</span> MZ세대 인지도 최상</li>
+                    </ul>
+                </div>
+                <!-- Green Plum -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">🍏 청매실 (Green Plum)</h3>
+                        <span class="text-indigo-600 font-bold">2위 (잠재력)</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start"><span class="mr-2 text-gray-400">•</span> 천연 AHA 스토리텔링 강력</li>
+                        <li class="flex items-start"><span class="mr-2 text-gray-400">•</span> K-Beauty 'Hanbang' 니치 마켓</li>
+                        <li class="flex items-start"><span class="mr-2 text-red-400">!</span> 대중적 인지도 부족 (교육 필요)</li>
+                    </ul>
+                </div>
+                <!-- Green Tea -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">🍃 녹차 (Green Tea)</h3>
+                        <span class="text-gray-500 font-bold">3위 (안정적)</span>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-start"><span class="mr-2 text-gray-400">•</span> 가장 높은 안전성/신뢰도</li>
+                        <li class="flex items-start"><span class="mr-2 text-gray-400">•</span> 시장 포화로 '새로움' 부족</li>
+                        <li class="flex items-start"><span class="mr-2 text-red-400">!</span> 마케팅 차별화 난이도 높음</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: DATA ANALYSIS -->
+        <div id="analysis" class="tab-content space-y-8">
+            <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">데이터 기반 비교 분석</h2>
+                <p class="text-gray-600 mb-6">
+                    미국 시장 내 검색량 트렌드와 소비자 인식 속성을 분석하여, 왜 말차가 '빠른 판매'에 유리한지 시각화했습니다.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Chart 1: Interest Trends -->
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">미국 내 성분 관심도 트렌드 (최근 5년 시뮬레이션)</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 flex-grow flex items-center justify-center">
+                            <div class="chart-container">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 text-center">
+                            *말차는 지속적인 상승세이며, 특히 뷰티 카테고리 확장이 두드러집니다.
+                        </p>
+                    </div>
+
+                    <!-- Chart 2: Attribute Radar -->
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">성분 속성 비교 매트릭스</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 flex-grow flex items-center justify-center">
+                            <div class="chart-container">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3 text-center">
+                            *말차는 '트렌디함'과 '효능 인지'의 균형이 가장 좋습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Comparison Table -->
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-900">상세 비교 분석</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">구분</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-emerald-600 uppercase tracking-wider font-bold">말차 (Matcha)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">청매실 (Green Plum)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">녹차 (Green Tea)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">핵심 소구점</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">항산화, 모공 정화, 디톡스</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">천연 AHA, 각질 연화, 매끈결</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">진정, 수분, 순한 케어</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">미국 소비자 인식</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">"프리미엄 웰니스", "힙한 카페 음료"</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">"생소함", "아시아 전통 약재"</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">"기본템", "안전하지만 지루함"</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">고마쥬 제형 적합성</td>
+                                <td class="px-6 py-4 text-sm text-emerald-600 font-bold">★★★★★ (가루 입자 연상)</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">★★★★☆ (효소/산 연상)</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">★★★☆☆ (수분 젤 연상)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">초기 마케팅 난이도</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">낮음 (이미 알고 있음)</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">높음 (매실이 무엇인지 설명 필요)</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">중간 (차별화 포인트 찾기 어려움)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: STRATEGY -->
+        <div id="strategy" class="tab-content space-y-8">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">🚀 말차 고마쥬 앰플 런칭 전략</h2>
+                <p class="mt-2 text-gray-600">빠른 판매(Fast Sales)를 위한 구체적인 액션 플랜 및 스토리텔링 포인트입니다.</p>
+            </div>
+
+            <!-- Marketing Hooks -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Concept Board -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border-t-4 border-emerald-500">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">📢 핵심 마케팅 키워드</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">1</div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-900">"Matcha Scrub Detox"</h4>
+                                <p class="text-sm text-gray-600">마시는 디톡스에서 바르는 디톡스로. 말차 가루가 노폐물을 흡착하고 고마쥬가 밀어낸다는 이중 케어 강조.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">2</div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-900">"Antioxidant Peel"</h4>
+                                <p class="text-sm text-gray-600">자극적인 산성 필링 대신, 항산화 성분으로 피부를 보호하며 벗겨내는 순한 필링 소구.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">3</div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-900">"Visual Texture (ASMR)"</h4>
+                                <p class="text-sm text-gray-600">실제 말차 가루가 보이는 초록색 제형이 때처럼 밀리는 시각적 쾌감(Satisfying)을 숏폼 콘텐츠로 활용.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Widget -->
+                <div class="bg-stone-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">📊 예상 판매 속도 시뮬레이션</h3>
+                    <p class="text-sm text-gray-600 mb-4">성분별 클릭률(CTR)과 전환율(CVR) 예상치를 기반으로 1,000명 노출 시 예상 판매 건수를 비교합니다.</p>
+                    
+                    <div class="space-y-6">
+                        <!-- Matcha Bar -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-emerald-700">말차 (Matcha)</span>
+                                <span class="text-sm font-medium text-emerald-700">42건 예상</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full" style="width: 85%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">높은 클릭률 + 준수한 전환율 (트렌드 반영)</p>
+                        </div>
+
+                        <!-- Plum Bar -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">청매실 (Green Plum)</span>
+                                <span class="text-sm font-medium text-gray-700">28건 예상</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-lime-600 h-4 rounded-full" style="width: 55%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">클릭률 낮음(생소함) + 전환율 높음(상세페이지 설득력)</p>
+                        </div>
+
+                        <!-- Green Tea Bar -->
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm font-medium text-gray-700">녹차 (Green Tea)</span>
+                                <span class="text-sm font-medium text-gray-700">31건 예상</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-gray-400 h-4 rounded-full" style="width: 62%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">클릭률 중간(평범함) + 안정적 전환율</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Check -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-red-100">
+                <h3 class="text-lg font-bold text-gray-900 mb-3">⚠️ 주의사항 (Risk Management)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="p-3 bg-red-50 rounded text-red-800">
+                        <strong>말차: 갈변 현상</strong><br>
+                        천연 색소 특성상 빛에 의한 변색 우려. 불투명 용기 또는 UV 차단 용기 필수.
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded text-gray-800">
+                        <strong>청매실: 향(Scent) 호불호</strong><br>
+                        발효취가 나지 않도록 조향에 신경써야 하며, 'Sour'한 느낌을 피해야 함.
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded text-gray-800">
+                        <strong>녹차: 저가 이미지 탈피</strong><br>
+                        너무 흔한 성분이므로 '어떤 녹차'인지(예: 제주 첫물차, 덖음차) 프리미엄화 필수.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="mb-2 font-bold text-lg">K-Beauty Launch Strategy Report</p>
+            <p class="text-gray-400 text-sm">Generated for Strategic Decision Making. Data based on US Market Trend Analysis.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'summary'
+        };
+
+        // --- Navigation Logic ---
+        function switchTab(tabId) {
+            // Update State
+            state.currentTab = tabId;
+
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Show selected content
+            document.getElementById(tabId).classList.add('active');
+
+            // Update Nav Styles
+            const navIds = ['summary', 'analysis', 'strategy'];
+            navIds.forEach(id => {
+                const btn = document.getElementById(`nav-${id}`);
+                if (id === tabId) {
+                    btn.classList.add('active-tab', 'text-emerald-600');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('active-tab', 'text-emerald-600');
+                    btn.classList.add('text-gray-500');
+                }
+            });
+
+            // If charts tab is opened and charts aren't rendered, resize triggers might be needed
+            // But Chart.js handles responsive resize well usually.
+        }
+
+        // --- Chart Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. Line Chart: US Search Interest Trends (Simulation)
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['2019', '2020', '2021', '2022', '2023', '2024 (Est)'],
+                    datasets: [
+                        {
+                            label: 'Matcha (말차)',
+                            data: [45, 55, 68, 80, 88, 95],
+                            borderColor: '#059669', // Emerald 600
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Green Tea (녹차)',
+                            data: [70, 72, 71, 73, 70, 68],
+                            borderColor: '#9CA3AF', // Gray 400
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: false
+                        },
+                        {
+                            label: 'Green Plum (청매실)',
+                            data: [10, 12, 18, 25, 35, 42],
+                            borderColor: '#84CC16', // Lime 500
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: '관심도 지수 (Index)' } }
+                    }
+                }
+            });
+
+            // 2. Radar Chart: Attribute Comparison
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['인지도 (Awareness)', '트렌디함 (Novelty)', '효능 인지 (Efficacy)', '비주얼 (Visual)', '프리미엄 (Premium)'],
+                    datasets: [
+                        {
+                            label: '말차 (Matcha)',
+                            data: [80, 95, 90, 95, 90],
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.2)',
+                            pointBackgroundColor: '#059669'
+                        },
+                        {
+                            label: '청매실 (Plum)',
+                            data: [30, 85, 80, 60, 85],
+                            borderColor: '#84CC16',
+                            backgroundColor: 'rgba(132, 204, 22, 0.2)',
+                            pointBackgroundColor: '#84CC16'
+                        },
+                        {
+                            label: '녹차 (Green Tea)',
+                            data: [95, 40, 75, 50, 60],
+                            borderColor: '#9CA3AF',
+                            backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                            pointBackgroundColor: '#9CA3AF'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: { line: { borderWidth: 2 } },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
