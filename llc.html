@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미국 법인 설립 가이드: C-Corp vs LLC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; height: 350px; }
+        .step-card { transition: all 0.3s ease; }
+        .step-card.active { border-left: 4px solid #3b82f6; background-color: #eff6ff; }
+        .tab-btn.active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 700; }
+        .check-item.checked { text-decoration: line-through; color: #94a3b8; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Chosen Palette: Slate & Blue (Professional, Trustworthy, Clean) -->
+    <!-- Application Structure Plan: 
+        1. Hero Section: Clear value proposition and objective.
+        2. Dashboard: "Decision Engine" - Interactive comparison of C-Corp vs LLC using Radar charts and comparative tables.
+        3. Process Roadmap: A vertical interactive stepper detailing the 7-step process from planning to banking.
+        4. Requirements & Checklist: Interactive checklist for documents and prerequisites tailored for Koreans (Passport, no SSN scenarios).
+        5. Simulation: A simple cost and timeline estimator based on state selection (Delaware vs others).
+        This structure prioritizes the "Decision" (Type of entity) first, then the "Action" (How to do it), adhering to a logical user flow.
+    -->
+    <!-- Visualization & Content Choices:
+        1. Entity Comparison: Radar Chart (Chart.js) to visualize abstract metrics like "Investment Ease", "Tax Efficiency", "Admin Burden".
+        2. Tax Structure: Stacked Bar Chart (Chart.js) to visually demonstrate "Double Taxation" (C-Corp) vs "Pass-through" (LLC).
+        3. Process Flow: HTML/CSS styled vertical timeline with JS interactions to expand details (Replacing SVG/Mermaid).
+        4. State Selection: Interactive Cards (HTML/JS) to highlight Delaware vs. Others.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-slate-800">🇺🇸 미국 법인 설립 가이드</span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <button onclick="scrollToSection('comparison')" class="text-slate-600 hover:text-blue-600 font-medium">유형 비교</button>
+                    <button onclick="scrollToSection('process')" class="text-slate-600 hover:text-blue-600 font-medium">설립 절차</button>
+                    <button onclick="scrollToSection('requirements')" class="text-slate-600 hover:text-blue-600 font-medium">필요 서류</button>
+                    <button onclick="scrollToSection('simulation')" class="text-slate-600 hover:text-blue-600 font-medium">비용 시뮬레이션</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl mb-4">
+                한국 창업가를 위한 미국 진출 로드맵
+            </h1>
+            <p class="text-xl text-slate-500 max-w-3xl mx-auto mb-8">
+                C-Corporation과 LLC의 차이점부터 설립 절차, 필요 서류까지.<br>
+                복잡한 미국 법인 설립 과정을 한눈에 파악하고 전략적인 결정을 내리세요.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button onclick="scrollToSection('comparison')" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                    유형 비교하기
+                </button>
+                <button onclick="scrollToSection('process')" class="px-6 py-3 bg-white text-blue-600 border border-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition">
+                    절차 확인하기
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        
+        <!-- SECTION 1: Comparison Engine -->
+        <section id="comparison" class="py-16 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-900">C-Corp vs. LLC: 나에게 맞는 유형은?</h2>
+                    <p class="mt-4 text-lg text-slate-600">
+                        법인 유형 선택은 미국 진출의 첫 단추입니다. 투자 유치 계획, 세금 구조, 관리 부담을 고려하여 최적의 선택을 하세요.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <!-- Chart Panel -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4 text-center">유형별 특성 분석</h3>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                        <p class="text-sm text-slate-500 text-center mt-4">
+                            * 점수가 높을수록 해당 항목에서 유리하거나 강점이 있음을 의미합니다.
+                        </p>
+                    </div>
+
+                    <!-- Text/Interaction Panel -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex border-b border-slate-200 mb-6">
+                            <button id="btn-ccorp" onclick="switchTab('ccorp')" class="tab-btn active flex-1 py-2 text-center text-lg">C-Corporation</button>
+                            <button id="btn-llc" onclick="switchTab('llc')" class="tab-btn flex-1 py-2 text-center text-lg">LLC</button>
+                        </div>
+
+                        <div id="content-ccorp" class="block">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <span class="flex-shrink-0 h-6 w-6 text-blue-500 text-xl font-bold mr-2">✓</span>
+                                    <div>
+                                        <strong class="block text-slate-900">투자 유치 최적화</strong>
+                                        <span class="text-slate-600">주식 발행이 자유롭고 구조가 표준화되어 있어 VC(벤처캐피탈)들이 가장 선호하는 형태입니다.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="flex-shrink-0 h-6 w-6 text-blue-500 text-xl font-bold mr-2">✓</span>
+                                    <div>
+                                        <strong class="block text-slate-900">이중 과세 (Double Taxation)</strong>
+                                        <span class="text-slate-600">법인 단계에서 법인세를 내고, 배당 시 개인 소득세를 또 냅니다. (단, 재투자를 위해 배당을 하지 않으면 이연 가능)</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="flex-shrink-0 h-6 w-6 text-blue-500 text-xl font-bold mr-2">✓</span>
+                                    <div>
+                                        <strong class="block text-slate-900">비자 및 신분 해결</strong>
+                                        <span class="text-slate-600">한국인 창업자가 주재원 비자(L-1)나 투자 비자(E-2)를 진행하기에 더 명확한 구조를 제공합니다.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                                <strong class="text-blue-800">추천 대상:</strong>
+                                <p class="text-blue-700">외부 투자를 목표로 하는 스타트업, 글로벌 상장을 계획하는 기업</p>
+                            </div>
+                        </div>
+
+                        <div id="content-llc" class="hidden">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <span class="flex-shrink-0 h-6 w-6 text-green-600 text-xl font-bold mr-2">✓</span>
+                                    <div>
+                                        <strong class="block text-slate-900">유연한 운영 구조</strong>
+                                        <span class="text-slate-600">주주총회나 이사회가 의무가 아니며, 운영 계약서(Operating Agreement)에 따라 자유롭게 운영 가능합니다.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="flex-shrink-0 h-6 w-6 text-green-600 text-xl font-bold mr-2">✓</span>
+                                    <div>
+                                        <strong class="block text-slate-900">이중 과세 방지 (Pass-through)</strong>
+                                        <span class="text-slate-600">법인세를 내지 않고, 이익이 개인 소득으로 간주되어 개인 소득세만 납부합니다.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="flex-shrink-0 h-6 w-6 text-red-500 text-xl font-bold mr-2">!</span>
+                                    <div>
+                                        <strong class="block text-slate-900">한국 거주자의 주의점</strong>
+                                        <span class="text-slate-600">한국 거주자가 미국 LLC를 설립할 경우, 한국 세법상 법인으로 볼지 개인으로 볼지 복잡하며, 미국 비거주자로서 세금 신고가 까다로울 수 있습니다.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-100">
+                                <strong class="text-green-800">추천 대상:</strong>
+                                <p class="text-green-700">개인 사업자, 소규모 무역업, 부동산 투자, 투자가 필요 없는 현금 흐름 중심 비즈니스</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Process Roadmap -->
+        <section id="process" class="py-16 bg-white">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12">
+                    <h2 class="text-3xl font-bold text-slate-900">법인 설립 7단계 프로세스</h2>
+                    <p class="mt-4 text-lg text-slate-600">
+                        한국에서 미국 법인을 설립하는 과정은 100% 온라인으로도 가능합니다. 각 단계를 클릭하여 상세 내용을 확인하세요.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Steps List -->
+                    <div class="col-span-1 space-y-2">
+                        <button onclick="showStep(0)" id="step-btn-0" class="step-card active w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-wide">Step 1</span>
+                            <h4 class="font-bold text-slate-800">설립 주(State) 선정</h4>
+                        </button>
+                        <button onclick="showStep(1)" id="step-btn-1" class="step-card w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Step 2</span>
+                            <h4 class="font-bold text-slate-800">법인명 검색 및 결정</h4>
+                        </button>
+                        <button onclick="showStep(2)" id="step-btn-2" class="step-card w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Step 3</span>
+                            <h4 class="font-bold text-slate-800">Registered Agent 지정</h4>
+                        </button>
+                        <button onclick="showStep(3)" id="step-btn-3" class="step-card w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Step 4</span>
+                            <h4 class="font-bold text-slate-800">설립 정관(Articles) 제출</h4>
+                        </button>
+                        <button onclick="showStep(4)" id="step-btn-4" class="step-card w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Step 5</span>
+                            <h4 class="font-bold text-slate-800">EIN (납세자 번호) 발급</h4>
+                        </button>
+                        <button onclick="showStep(5)" id="step-btn-5" class="step-card w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Step 6</span>
+                            <h4 class="font-bold text-slate-800">운영 계약서 작성</h4>
+                        </button>
+                        <button onclick="showStep(6)" id="step-btn-6" class="step-card w-full text-left p-4 rounded-lg hover:bg-slate-50 focus:outline-none">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Step 7</span>
+                            <h4 class="font-bold text-slate-800">은행 계좌 개설</h4>
+                        </button>
+                    </div>
+
+                    <!-- Detail View -->
+                    <div class="col-span-1 md:col-span-2 bg-slate-50 p-8 rounded-2xl border border-slate-200 min-h-[400px]">
+                        <div id="step-content">
+                            <!-- Content injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Requirements & Checklist -->
+        <section id="requirements" class="py-16 bg-slate-50">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-slate-900">준비물 및 필요 서류 체크리스트</h2>
+                    <p class="mt-4 text-slate-600">한국 거주자가 준비해야 할 필수 항목들입니다. 항목을 클릭하여 준비 상태를 체크해보세요.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-6 bg-blue-50 border-b border-blue-100">
+                        <h3 class="font-bold text-blue-900">설립 전 필수 준비물</h3>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">여권 사본 (컬러 스캔)</strong>
+                                <span class="text-sm text-slate-500">유효기간이 6개월 이상 남아야 하며, 모든 이사/주주(10% 이상)의 여권이 필요합니다.</span>
+                            </div>
+                        </div>
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">영문 주소지 증명</strong>
+                                <span class="text-sm text-slate-500">한국 주소 증명을 위한 영문 주민등록등본 또는 공과금 고지서.</span>
+                            </div>
+                        </div>
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">법인 영문명 후보 (3개)</strong>
+                                <span class="text-sm text-slate-500">중복 방지를 위해 1순위부터 3순위까지 준비가 필요합니다. (예: TechKorea Inc.)</span>
+                            </div>
+                        </div>
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">해외 결제 가능한 신용카드</strong>
+                                <span class="text-sm text-slate-500">주정부 등록비(Filing Fee) 등을 결제하기 위한 VISA/MasterCard.</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 bg-green-50 border-b border-green-100 border-t border-slate-200">
+                        <h3 class="font-bold text-green-900">설립 후 필수 항목 (은행 개설 등)</h3>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">EIN (Employer Identification Number)</strong>
+                                <span class="text-sm text-slate-500">SSN이 없는 외국인은 Form SS-4를 작성하여 IRS에 팩스로 신청해야 합니다 (약 4주 소요).</span>
+                            </div>
+                        </div>
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">미국 내 실제 주소 (Physical Address)</strong>
+                                <span class="text-sm text-slate-500">은행 계좌 개설 시 PO Box는 불가한 경우가 많습니다. 가상 오피스나 실제 사무실 계약이 필요합니다.</span>
+                            </div>
+                        </div>
+                        <div onclick="toggleCheck(this)" class="check-item p-4 hover:bg-slate-50 cursor-pointer flex items-center transition">
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded mr-4 flex items-center justify-center text-white check-box">✓</div>
+                            <div>
+                                <strong class="block text-slate-800">미국 방문 계획 (권장)</strong>
+                                <span class="text-sm text-slate-500">최근 Mercury, Brex 등 핀테크 은행도 까다로워져, 실제 은행 지점(Chase, BoA 등) 방문 개설이 가장 확실합니다.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Cost Simulation -->
+        <section id="simulation" class="py-16 bg-white border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900 mb-6">초기 비용 및 유지비 예상</h2>
+                        <p class="text-lg text-slate-600 mb-8">
+                            가장 인기 있는 델라웨어(Delaware)주와 캘리포니아(California)주를 기준으로 한 대략적인 비용입니다. (대행 수수료 제외, 주정부 수수료 기준)
+                        </p>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">설립 주(State) 선택</label>
+                                <select id="state-selector" onchange="updateCost()" class="w-full p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="delaware">Delaware (델라웨어 - 투자 선호도 1위)</option>
+                                    <option value="california">California (캘리포니아 - IT/Tech 중심)</option>
+                                    <option value="wyoming">Wyoming (와이오밍 - 저렴한 비용)</option>
+                                    <option value="newyork">New York (뉴욕 - 상업 중심)</option>
+                                </select>
+                            </div>
+
+                            <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                                <h3 class="font-bold text-blue-900 mb-4">예상 비용 (연간)</h3>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-slate-600">초기 설립 비용 (Filing Fee)</span>
+                                    <span id="cost-setup" class="font-bold text-slate-900">$90</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-slate-600">연례 보고서/세금 (Franchise Tax)</span>
+                                    <span id="cost-maintenance" class="font-bold text-slate-900">$300 ~ (Variable)</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-slate-600">Registered Agent (평균)</span>
+                                    <span class="font-bold text-slate-900">~$150</span>
+                                </div>
+                                <hr class="border-blue-200 my-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-blue-900">첫해 총 예상 비용</span>
+                                    <span id="cost-total" class="text-2xl font-extrabold text-blue-600">$540+</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2 text-right">*법무/회계 대행료 제외 순수 관납료/실비 기준</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-xl shadow-inner">
+                        <h3 class="text-xl font-bold text-slate-900 mb-4">세금 구조 시뮬레이션 (C-Corp vs LLC)</h3>
+                        <p class="text-sm text-slate-500 mb-4">순수익 $100,000 발생 시 단순 세율 비교 (비거주자 시나리오는 복잡하므로 일반적인 구조 예시)</p>
+                        <div class="chart-container">
+                            <canvas id="taxChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-sm text-slate-600 bg-white p-3 rounded border border-slate-200">
+                            <strong>Note:</strong> C-Corp는 21% 연방 법인세 납부 후, 개인에게 배당 시 배당소득세(최대 20%+3.8%)가 발생합니다. LLC는 법인세 없이 개인 소득세율(10~37%)을 적용받지만, 한국 거주자의 경우 한-미 조세조약에 따라 상황이 달라질 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-300 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-2xl font-bold text-white mb-4">미국 진출, 철저한 준비가 성공의 절반입니다.</h2>
+            <p class="mb-8 max-w-2xl mx-auto text-slate-400">
+                본 가이드는 정보 제공을 목적으로 작성되었으며, 법적/세무적 조언을 대신할 수 없습니다. <br>
+                구체적인 설립 진행 시에는 반드시 미국 변호사 및 회계사와 상담하시기 바랍니다.
+            </p>
+            <div class="text-sm text-slate-500">
+                &copy; 2024 Global Setup Guide. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA & STATE MANAGEMENT ---
+        const stepData = [
+            {
+                title: "1. 설립 주(State) 선정",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">어디에 회사를 세울 것인가?</h3>
+                    <p class="text-slate-600 mb-4">미국은 주마다 회사법과 세법이 다릅니다. 한국 기업들이 가장 선호하는 주는 다음과 같습니다.</p>
+                    <ul class="list-disc pl-5 space-y-2 text-slate-700 mb-6">
+                        <li><strong>Delaware (델라웨어):</strong> 투자 유치에 가장 유리합니다. 회사법이 기업 친화적이며, VC들이 표준으로 요구합니다. 실제 사무실이 없어도 설립이 쉽습니다.</li>
+                        <li><strong>California (캘리포니아):</strong> IT 인재 채용이나 실제 사업장이 캘리포니아에 있다면 고려해야 합니다. 하지만 세금(Minimum $800)과 규제가 강합니다.</li>
+                        <li><strong>Wyoming/Nevada:</strong> 법인세가 없거나 낮아 소규모 LLC에 인기가 많습니다.</li>
+                    </ul>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                        <p class="font-bold text-yellow-800">Tip:</p>
+                        <p class="text-yellow-700">스타트업 투자를 목표로 한다면 고민하지 말고 <strong>Delaware C-Corp</strong>를 선택하세요.</p>
+                    </div>
+                `
+            },
+            {
+                title: "2. 법인명 검색 및 결정",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">회사 이름 정하기</h3>
+                    <p class="text-slate-600 mb-4">원하는 회사 이름이 해당 주에 이미 등록되어 있는지 확인해야 합니다.</p>
+                    <ul class="list-disc pl-5 space-y-2 text-slate-700">
+                        <li>각 주 정부(Secretary of State) 웹사이트에서 'Business Entity Search'를 통해 무료로 검색 가능합니다.</li>
+                        <li>법인명 뒤에 반드시 법적 형태를 명시해야 합니다. (예: Inc., Corp., LLC, Limited 등)</li>
+                        <li>상표권(Trademark) 침해 여부도 USPTO 사이트에서 미리 확인하는 것이 좋습니다.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "3. Registered Agent (등록 대리인) 지정",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">현지 연락책 지정</h3>
+                    <p class="text-slate-600 mb-4">미국 법인은 해당 주에 법적 서류(소송장, 세금 고지서 등)를 수령할 수 있는 물리적 주소를 가진 대리인(Registered Agent)이 반드시 필요합니다.</p>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-blue-900 mb-2">한국 거주자의 경우?</h4>
+                        <p class="text-slate-700">미국에 지인이 없어도 됩니다. 전문 대행 서비스(연 $100~$200)를 이용하면 그들이 대리인 역할을 수행하고 주소를 빌려줍니다.</p>
+                    </div>
+                `
+            },
+            {
+                title: "4. 설립 정관(Articles) 제출",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">법적 서류 제출 (Filing)</h3>
+                    <p class="text-slate-600 mb-4">주 정부에 설립 정관을 제출하고 수수료를 납부하면 법적으로 회사가 탄생합니다.</p>
+                    <ul class="list-disc pl-5 space-y-2 text-slate-700">
+                        <li><strong>C-Corp:</strong> Certificate of Incorporation</li>
+                        <li><strong>LLC:</strong> Articles of Organization</li>
+                        <li><strong>필수 정보:</strong> 법인명, 주식 수(C-Corp), 주소, 설립자 정보, Registered Agent 정보</li>
+                        <li>대부분 온라인으로 제출 가능하며, 승인까지 며칠에서 몇 주가 소요됩니다 (Express 서비스 이용 시 단축 가능).</li>
+                    </ul>
+                `
+            },
+            {
+                title: "5. EIN (납세자 번호) 발급",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">회사의 주민번호, EIN</h3>
+                    <p class="text-slate-600 mb-4">은행 계좌 개설과 직원 채용, 세금 신고를 위해 국세청(IRS)에서 EIN(Employer Identification Number)을 받아야 합니다.</p>
+                    <div class="bg-slate-100 p-4 rounded border border-slate-300">
+                        <strong class="block mb-2">SSN(미국 사회보장번호)이 없는 한국인의 경우:</strong>
+                        <p class="text-sm">온라인 신청이 불가능할 수 있습니다. <strong>Form SS-4</strong>를 작성하여 IRS에 팩스로 보내야 하며, 발급까지 영업일 기준 약 4주~8주가 소요될 수 있으니 미리 준비해야 합니다.</p>
+                    </div>
+                `
+            },
+            {
+                title: "6. 운영 계약서 작성",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">내부 규칙 정하기</h3>
+                    <p class="text-slate-600 mb-4">주 정부에 제출하지는 않지만, 회사 운영의 핵심이 되는 내부 문서입니다.</p>
+                    <ul class="list-disc pl-5 space-y-2 text-slate-700">
+                        <li><strong>C-Corp (Bylaws):</strong> 주주총회 절차, 이사 선임 방식, 임원 의무 등을 규정.</li>
+                        <li><strong>LLC (Operating Agreement):</strong> 지분율 소유권, 수익 분배 방식, 의사결정 권한 등을 규정. 은행 계좌 개설 시 은행에서 요구하는 경우가 많습니다.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "7. 은행 계좌 개설",
+                content: `
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">자금 운용의 시작</h3>
+                    <p class="text-slate-600 mb-4">법인 설립 후 가장 어려운 단계일 수 있습니다. 미국 애국법(Patriot Act) 강화로 신원 확인이 엄격합니다.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="border p-3 rounded">
+                            <strong class="text-blue-600">전통 은행 (Chase, BoA 등)</strong>
+                            <p class="text-sm mt-1">대표자가 직접 미국 지점을 방문해야 개설 가능성이 높습니다.</p>
+                        </div>
+                        <div class="border p-3 rounded">
+                            <strong class="text-purple-600">핀테크 은행 (Mercury, Brex)</strong>
+                            <p class="text-sm mt-1">온라인으로 개설 가능했으나, 최근 심사가 매우 까다로워졌습니다. 확실한 사업 모델과 웹사이트가 필요합니다.</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        const costs = {
+            delaware: { setup: 90, maintenance: 300, note: "Min Franchise Tax $175 (LLC $300)" },
+            california: { setup: 70, maintenance: 800, note: "Min Franchise Tax $800/yr" },
+            wyoming: { setup: 100, maintenance: 60, note: "License Tax $60" },
+            newyork: { setup: 200, maintenance: 9, note: "Biennial Statement $9 (LLC Publication Fee High)" }
+        };
+
+        // --- INIT CHART.JS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Radar Chart for Comparison
+            const ctxComp = document.getElementById('comparisonChart').getContext('2d');
+            new Chart(ctxComp, {
+                type: 'radar',
+                data: {
+                    labels: ['투자 유치 용이성', '설립 비용 효율성', '유지 관리 편의성', '세금 유연성(개인)', '책임 보호'],
+                    datasets: [{
+                        label: 'C-Corporation',
+                        data: [10, 6, 5, 4, 9],
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(59, 130, 246)'
+                    }, {
+                        label: 'LLC',
+                        data: [3, 8, 8, 9, 9],
+                        fill: true,
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        borderColor: 'rgb(16, 185, 129)',
+                        pointBackgroundColor: 'rgb(16, 185, 129)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(16, 185, 129)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // 2. Stacked Bar Chart for Tax Simulation
+            const ctxTax = document.getElementById('taxChart').getContext('2d');
+            new Chart(ctxTax, {
+                type: 'bar',
+                data: {
+                    labels: ['C-Corp', 'LLC (Pass-through)'],
+                    datasets: [
+                        {
+                            label: '순이익 (After Tax)',
+                            data: [63200, 70000], // Illustrative Example
+                            backgroundColor: '#94a3b8',
+                        },
+                        {
+                            label: '법인세 (21%)',
+                            data: [21000, 0],
+                            backgroundColor: '#3b82f6',
+                        },
+                        {
+                            label: '개인 소득세 (배당/Pass-through)',
+                            data: [15800, 30000], // Approx simplified rates
+                            backgroundColor: '#ef4444',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                footer: (tooltipItems) => {
+                                    return '세금은 개인 상황/주(State)에 따라 크게 다를 수 있음.';
+                                }
+                            }
+                        },
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true }
+                    }
+                }
+            });
+
+            // Initialize Step View
+            showStep(0);
+            updateCost();
+        });
+
+        // --- INTERACTION LOGIC ---
+
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${type}`).classList.add('active');
+            
+            document.getElementById('content-ccorp').classList.add('hidden');
+            document.getElementById('content-llc').classList.add('hidden');
+            document.getElementById(`content-${type}`).classList.remove('hidden');
+        }
+
+        function showStep(index) {
+            // Update buttons
+            document.querySelectorAll('.step-card').forEach((card, idx) => {
+                if(idx === index) {
+                    card.classList.add('active', 'border-l-4', 'border-blue-500', 'bg-blue-50');
+                    card.classList.remove('hover:bg-slate-50');
+                    // Ensure icon color changes if needed
+                } else {
+                    card.classList.remove('active', 'border-l-4', 'border-blue-500', 'bg-blue-50');
+                    card.classList.add('hover:bg-slate-50');
+                }
+            });
+
+            // Update Content with Fade Effect
+            const contentDiv = document.getElementById('step-content');
+            contentDiv.style.opacity = '0';
+            setTimeout(() => {
+                contentDiv.innerHTML = stepData[index].content;
+                contentDiv.style.opacity = '1';
+                contentDiv.style.transition = 'opacity 0.3s ease-in';
+            }, 150);
+        }
+
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+            const box = element.querySelector('.check-box');
+            if (element.classList.contains('checked')) {
+                box.classList.remove('border-slate-300');
+                box.classList.add('bg-blue-500', 'border-blue-500');
+            } else {
+                box.classList.add('border-slate-300');
+                box.classList.remove('bg-blue-500', 'border-blue-500');
+            }
+        }
+
+        function updateCost() {
+            const state = document.getElementById('state-selector').value;
+            const data = costs[state];
+
+            document.getElementById('cost-setup').innerText = `$${data.setup}`;
+            document.getElementById('cost-maintenance').innerText = `$${data.maintenance} ~`;
+            document.getElementById('cost-total').innerText = `$${data.setup + 150 + data.maintenance}`; // Including approx RA fee
+        }
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+    </script>
+</body>
+</html>
